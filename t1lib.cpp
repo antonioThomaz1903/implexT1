@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<time.h>
 #include"t1lib.h"
 
 // Adiciona um elemento na lista
@@ -65,7 +66,7 @@ void troca(tlista **a, tlista**b){
     (*b)->dado = aux; 
 }
 
-void *cria_ordenado(tlista **raiz, tlista **fim, int qtd){
+void cria_ordenado(tlista **raiz, tlista **fim, int qtd){
     int *aux;
     for(int i=1; i<=qtd; i++){
         aux = (int*)calloc(1, sizeof(int));
@@ -74,11 +75,39 @@ void *cria_ordenado(tlista **raiz, tlista **fim, int qtd){
     }
 }
 
-void *cria_inverso(tlista **raiz, tlista **fim, int qtd){
+void cria_inverso(tlista **raiz, tlista **fim, int qtd){
     int *aux;
     for(int i=qtd; i>0; i--){
         aux = (int*)calloc(1, sizeof(int));
         *aux = i;
         add(raiz, fim, aux);
+    }
+}
+
+void cria_aleatorio(tlista **raiz, tlista **fim, int qtd){
+    srand(time(NULL));
+    int *aux;
+    for(int i=0; i < qtd; i++){
+        aux = (int*)calloc(1, sizeof(int));
+        *aux = rand() %qtd + 1;
+        add(raiz, fim, aux);
+    }
+}
+
+void cria_quase(tlista **raiz, tlista **fim, int qtd){
+    int dezp = qtd/10;
+    int cont = 0;
+    int *aux;
+    srand(time(NULL));
+    for(int i=0 ;i<qtd; i++){
+        aux = (int*)calloc(1, sizeof(int));
+        *aux = rand() % qtd + 1;
+        if(cont < dezp){
+            add(raiz, fim, aux);
+            cont++;
+        }
+        else{
+            *aux = i;
+        }
     }
 }

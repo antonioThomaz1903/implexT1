@@ -24,12 +24,12 @@ int main()
     std::cout << *(int*)(raiz->prox->prox->dado) << std::endl;
 
     tlista *teste = getByIndex(raiz, fim, 2, 3);
-    std::cout << "elemento 2: " << *(int*)(teste->dado);
+    std::cout << "elemento 2: " << *(int*)(teste->dado) << std::endl;
 
     int l = 2;
     teste = getByKey(raiz, fim, compara, &l, 3);
 
-    std::cout << "elemento '2':" << *(int*)(teste->dado);
+    std::cout << "elemento '2':" << teste->i;
 
     return 0;
 }

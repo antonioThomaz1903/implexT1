@@ -20,14 +20,11 @@ void cria_quase(tlista **raiz, tlista **fim, int qtd);
 
 
 //---------Ordenação----------
-void quicksort_(tlista **raiz, tlista **fim);
+void quicksort_(int p, int r, tlista **raiz, tlista **fim, int tam, int (*compara)(void*a, void*b));
 void mergesort_();
 void heapsort_();
 void completionsort_();
-void insertionsort_();
-void selectionsort_();
-
-
-
+void insertionsort_(tlista **raiz, tlista **fim, int (*compara)(void *a, void *b));
+void selectionsort_(tlista **raiz, tlista **fim, int (*compara)(void *a, void *b));
 
 #endif

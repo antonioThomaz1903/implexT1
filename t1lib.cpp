@@ -26,10 +26,7 @@ void add(tlista **raiz, tlista **fim, void *dado){
 tlista *getByIndex(tlista *raiz, tlista *fim, int i, int tam){
     int aux;
     tlista *p;
-    if(i == tam-1){ // Ultimo elemento
-        return fim;
-    }
-    else if(i <= tam/2){ // Primeira metade da lista
+    if(i <= tam/2){ // Primeira metade da lista
         aux = 0;
         p = raiz;
         for(;aux < i; aux++){
@@ -43,6 +40,7 @@ tlista *getByIndex(tlista *raiz, tlista *fim, int i, int tam){
             p = p->ant;
         }
     }
+    return p;
 }
 
 // Retorna um elemento por comparação de um dado variado
@@ -105,15 +103,24 @@ void cria_quase(tlista **raiz, tlista **fim, int qtd){
     srand(time(NULL));
     for(int i=0 ;i<qtd; i++){
         aux = (int*)calloc(1, sizeof(int));
-        *aux = rand() % qtd + 1;
         if(cont < dezp){
-            add(raiz, fim, aux);
+            *aux = qtd - i;
             cont++;
         }
         else{
             *aux = i;
         }
+        add(raiz, fim, aux);
     }
+}
+
+void destroi(tlista **raiz){
+    if(*raiz == NULL){
+        return;
+    }
+    destroi(&(*raiz)->prox);
+    free(*raiz);
+    *raiz = NULL;
 }
 
 // Método auxiliar do quicksort
@@ -125,12 +132,12 @@ int separa(int p, int r, tlista **raiz, tlista **fim, int tam, int (*compara)(vo
     j = r + 1;
     while (1) {
         do {
-        j--;
-        a = getByIndex(*raiz, *fim, j, tam);
+            j--;
+            a = getByIndex(*raiz, *fim, j, tam);
         } while (compara(a->dado, x->dado) < 0);
         do {
-        i++;
-        b = getByIndex(*raiz, *fim, i, tam);
+            i++;
+            b = getByIndex(*raiz, *fim, i, tam);
         } while (compara(b->dado, x->dado) > 0);
         if (i < j)
             troca(&a, &b);
@@ -141,46 +148,63 @@ int separa(int p, int r, tlista **raiz, tlista **fim, int tam, int (*compara)(vo
 
 // Quicksort
 // p=0, r = tam-1
-void quicksort_(int p, int r, tlista **raiz, tlista **fim, int tam, int (*compara)(void *a, void *b)){
+void quicksort(int p, int r, tlista **raiz, tlista **fim, int tam, int (*compara)(void *a, void *b)){
     int q;
     if (p < r) {
         q = separa(p, r, raiz, fim, tam, compara);
-        quicksort_(p, q, raiz, fim, tam, compara);
-        quicksort_(q+1, r, raiz, fim, tam, compara);
+        quicksort(p, q, raiz, fim, tam, compara);
+        quicksort(q+1, r, raiz, fim, tam, compara);
     }
+}
+
+void quicksort_(tlista **raiz, tlista **fim, int tam, int (*compara)(void*a, void*b)){
+    quicksort(0, tam, raiz, fim, tam, compara);
 }
 
 //InsertionSort
 void insertionsort_(tlista **raiz, tlista **fim, int (*compara)(void *a, void *b)){
-    int i, j, tam;
-    tlista *x, *y, *p, *q;
-    x = *raiz;
-    tam = (*fim)->i+1;
-
+    tlista *p, *q, *aux;
     for (p = *raiz; p!=NULL; p=p->prox){
-        for (q = (*raiz)->ant; q!=NULL && compara(x->dado, x->ant->dado) == 1; q->ant->dado){
-            troca(&x, &x->ant);
-            x = x->ant;
+        aux = p;
+        for (q = p->ant; q!=NULL && compara(aux->dado, q->dado) == 1; q = q->ant){
+            troca(&q, &aux);
+            aux = aux->ant;
         }
-        x = p;
     }
 }
 
 //SelectionSort
 void selectionsort_(tlista **raiz, tlista **fim, int (*compara)(void *a, void *b)){
-    int i, j, tam;
     tlista *x, *p, *q;
-    x = *raiz;//menor valor
-    tam = (*fim)->i+1;
 
     for (p = *raiz; p!=NULL; p=p->prox){
-        for (q = *raiz; q!=NULL; q=q->prox){
-            if (compara(q->dado, q->ant->dado) == 1){
-                x = getByIndex(*raiz, *fim, q->i, tam);
+        x = p;
+        for (q = p->prox; q!=NULL; q=q->prox){
+            if (compara(q->dado, x->dado) == 1){
+                x = q;
             }
         }
         troca(&p, &x);
-        q = p;
-        x = p;
+    }
+}
+
+//CountingSort
+void countingsort_(tlista **raiz, tlista **fim){
+    int tam, x, i, j, k, *aux;
+    x = 0;
+    tam = (*fim)->i + 2;
+    tlista *q;
+    int *v = (int*)calloc(tam, sizeof(int));
+    for (q=*raiz; q!=NULL; q=q->prox){//conta quantas vezes cada número aparece
+        v[*(int*)q->dado]++;
+    }
+    for (i=0, j=0; j<tam; j++){//ordena o vetor
+        for (k=v[j]; k>=0; k--){
+            q = getByIndex(*raiz, *fim, i, (*fim)->i+1);
+            aux = (int*)calloc(1, sizeof(int));
+            *aux = j;
+            q->dado = aux;
+            i++;
+        }
     }
 }

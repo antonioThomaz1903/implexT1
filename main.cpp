@@ -1,6 +1,13 @@
-#include<iostream>
+#include<stdio.h>
 #include<stdlib.h>
 #include"t1lib.h"
+
+void imprime(tlista *raiz){
+    tlista *p;
+    for(p = raiz; p!=NULL; p=p->prox){
+        printf("%d\n", *(int*)p->dado);
+    }
+}
 
 int compara(void*a, void*b){
     if(*(int*)a == *(int*)b){
@@ -16,23 +23,12 @@ int main()
 {
     tlista *raiz = NULL;
     tlista *fim = NULL;
+    cria_aleatorio(&raiz, &fim, 10);
+    imprime(raiz);
 
-    int i = 1, j = 2, k = 3;
-    add(&raiz, &fim, &i);
-    add(&raiz, &fim, &j);
-    add(&raiz, &fim, &k);
-
-    std::cout << std::endl << *(int*)(raiz->dado) << std::endl;
-    std::cout << *(int*)(raiz->prox->dado) << std::endl;
-    std::cout << *(int*)(raiz->prox->prox->dado) << std::endl;
-
-    tlista *teste = getByIndex(raiz, fim, 2, 3);
-    std::cout << "elemento 2: " << *(int*)(teste->dado) << std::endl;
-
-    int l = 2;
-    teste = getByKey(raiz, fim, compara, &l, 3);
-
-    std::cout << "elemento '2':" << teste->i;
+    printf("\nCOUNTING\n");
+    countingsort_(&raiz, &fim);
+    imprime(raiz);
 
     return 0;
 }

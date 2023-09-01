@@ -17,13 +17,13 @@ void cria_ordenado(tlista **raiz, tlista **fim, int qtd);
 void cria_aleatorio(tlista **raiz, tlista **fim, int qtd);
 void cria_inverso(tlista **raiz, tlista **fim, int qtd);
 void cria_quase(tlista **raiz, tlista **fim, int qtd);
-
+void destroi(tlista **raiz);
 
 //---------Ordenação----------
-void quicksort_(int p, int r, tlista **raiz, tlista **fim, int tam, int (*compara)(void*a, void*b));
+void quicksort_(tlista **raiz, tlista **fim, int tam, int (*compara)(void*a, void*b));
 void mergesort_();
 void heapsort_();
-void completionsort_();
+void countingsort_(tlista **raiz, tlista **fim);
 void insertionsort_(tlista **raiz, tlista **fim, int (*compara)(void *a, void *b));
 void selectionsort_(tlista **raiz, tlista **fim, int (*compara)(void *a, void *b));
 

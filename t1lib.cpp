@@ -124,41 +124,44 @@ void destroi(tlista **raiz){
 }
 
 // Método auxiliar do quicksort
-int separa(int p, int r, tlista **raiz, tlista **fim, int tam, int (*compara)(void *a, void *b)){
-    tlista *x, *a, *b;
-    int i, j;
-    x = getByIndex(*raiz, *fim, p, tam);
-    i = p - 1;
-    j = r + 1;
+tlista *separa(tlista *p, tlista *r, tlista **raiz, tlista **fim, int (*compara)(void *a, void *b)){
+    tlista *x, *i, *j;
+    int aux = 0;
+    x = p; i = p; j = r;
     while (1) {
-        do {
-            j--;
-            a = getByIndex(*raiz, *fim, j, tam);
-        } while (compara(a->dado, x->dado) < 0);
-        do {
-            i++;
-            b = getByIndex(*raiz, *fim, i, tam);
-        } while (compara(b->dado, x->dado) > 0);
-        if (i < j)
-            troca(&a, &b);
+        if(aux){
+            j = j->ant;
+            i = i->prox;
+        }
+        while (compara(j->dado, x->dado) < 0){
+            j = j->ant;
+        }
+        while (compara(i->dado, x->dado) > 0){
+            i = i->prox;
+        }
+        if (i->i < j->i){
+            troca(&i, &j);
+            aux = 1;
+        }
         else
             return j;
     }
 }
 
 // Quicksort
-// p=0, r = tam-1
-void quicksort(int p, int r, tlista **raiz, tlista **fim, int tam, int (*compara)(void *a, void *b)){
-    int q;
-    if (p < r) {
-        q = separa(p, r, raiz, fim, tam, compara);
-        quicksort(p, q, raiz, fim, tam, compara);
-        quicksort(q+1, r, raiz, fim, tam, compara);
+void quicksort(tlista *p, tlista *r, tlista **raiz, tlista **fim, int (*compara)(void *a, void *b)){
+    tlista *q;
+    if (p->i < r->i) {
+        q = separa(p, r, raiz, fim, compara);
+        quicksort(p, q, raiz, fim, compara);
+        quicksort(q->prox, r, raiz, fim, compara);
     }
 }
 
-void quicksort_(tlista **raiz, tlista **fim, int tam, int (*compara)(void*a, void*b)){
-    quicksort(0, tam, raiz, fim, tam, compara);
+void quicksort_(tlista **raiz, tlista **fim, int (*compara)(void*a, void*b)){
+    tlista *a, *b;
+    a = *raiz; b = *fim;
+    quicksort(a, b, raiz, fim, compara);
 }
 
 //InsertionSort

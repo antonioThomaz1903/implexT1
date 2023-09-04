@@ -56,12 +56,37 @@ tlista *getByKey(tlista *raiz, tlista *fim, int (*compara)(void*a, void*b), void
     }
 }
 
+int *copia(tlista *raiz, tlista *fim){
+    tlista *p;
+    int *vetor = (int*)calloc(fim->i+1, sizeof(int));
+    int i=0;
+    for(p = raiz; p!=NULL; p=p->prox){
+        vetor[i] = *(int*)p->dado;
+        i++;
+    }
+    return vetor;
+}
+
+void copia(tlista **raiz, tlista **fim, tlista *src){
+    for(tlista *p = src; p!=NULL; p=p->prox){
+        int aux = *(int*)p->dado;
+        add(raiz, fim, &aux);
+    }
+}
+
 // Troca dois elementos da lista
 void troca(tlista **a, tlista**b){
     void *aux;
     aux = (*a)->dado;
     (*a)->dado = (*b)->dado;
     (*b)->dado = aux; 
+}
+
+void troca(int *a, int *b){
+    int aux;
+    aux = *b;
+    *a = *b;
+    *b = aux;
 }
 
 // Inicializa a lista como um vetor ordenado
@@ -191,23 +216,99 @@ void selectionsort_(tlista **raiz, tlista **fim, int (*compara)(void *a, void *b
     }
 }
 
-//CountingSort
-void countingsort_(tlista **raiz, tlista **fim){
-    int tam, x, i, j, k, *aux;
-    x = 0;
-    tam = (*fim)->i + 2;
-    tlista *q;
-    int *v = (int*)calloc(tam, sizeof(int));
-    for (q=*raiz; q!=NULL; q=q->prox){//conta quantas vezes cada número aparece
-        v[*(int*)q->dado]++;
-    }
-    for (i=0, j=0; j<tam; j++){//ordena o vetor
-        for (k=v[j]; k>=0; k--){
-            q = getByIndex(*raiz, *fim, i, (*fim)->i+1);
-            aux = (int*)calloc(1, sizeof(int));
-            *aux = j;
-            q->dado = aux;
-            i++;
+void countingsort_(int *v, int n){
+  int i, j, k;
+  int w[n];
+  for (i=0; i<n; i++)
+    w[i]=0;
+  for (i=0; i<n; i++)
+    w[v[i]]++;
+  for (i=0, j=0; j<n; j++)
+    for (k=w[j]; k>0; k--)
+      v[i++]=j;
+}
+
+void intercala(tlista *p, tlista *q, tlista *r, tlista **raiz, tlista **fim, int (*compara)(void *a, void *b)){
+    tlista *i, *j, *k, *wi = NULL, *wf = NULL;
+    i = p; j = q;
+    while(i->i < q->i && j->i < r->i) {
+        if(compara(i->dado, j->dado) == 1){
+            add(&wi, &wf, i->dado); i = i->prox;
+        }
+        else{
+            add(&wi, &wf, j->dado); j = j->prox;
         }
     }
+    while(i->i < q->i) {
+        add(&wi, &wf, i->dado); i = i->prox;
+    }
+    
+    while(j->i < r->i) {
+        add(&wi, &wf, j->dado); j = j->prox;
+    }
+
+    for(i = p, k = wi; i->i < r->i; i=i->prox, k = k->prox){
+        i->dado = k->dado;
+    }
+
 }
+
+void mergesort(tlista *p, tlista *r, tlista **raiz, tlista **fim, int (*compara)(void *a, void *b)){
+    tlista *q;
+    if(p->i < r->i -1){
+        for(q = p; q->i < (p->i + r->i) / 2; q = q->prox);
+        mergesort(p, q, raiz, fim, compara);
+        mergesort(q, r, raiz, fim, compara);
+        intercala(p, q, r, raiz, fim, compara);
+    }
+}
+
+void mergesort_(tlista **raiz, tlista **fim, int (*compara)(void *a, void *b)){
+    tlista *a, *b;
+    int aux = 0;
+    add(raiz, fim, &aux);
+    a = *raiz;
+    b = *fim;
+    mergesort(a, b, raiz, fim, compara);
+    a = b;
+    b = b->ant;
+    free(a);
+    b->prox = NULL;
+}
+
+void criaHeap(int *vet, int i, int f){
+    int aux = vet[i];
+    int j = i * 2 + 1;
+    while (j <= f){
+        if(j < f){
+            if(vet[j] < vet[j + 1]){
+                j = j + 1;
+            }
+        }
+        if(aux < vet[j]){
+            vet[i] = vet[j];
+            i = j;
+            j = 2 * i + 1;
+        }else{
+            j = f + 1;
+        }
+    }
+    vet[i] = aux;
+}
+
+void heapsort_(int *vet, int N){
+    int i, aux;
+    for(i=(N - 1)/2; i >= 0; i--){
+        criaHeap(vet, i, N-1);
+    }
+    for (i = N-1; i >= 1; i--){
+        aux = vet[0];
+        vet [0] = vet [i];
+        vet [i] = aux;
+        criaHeap(vet, 0, i - 1);
+    }
+}
+ 
+
+
+ 

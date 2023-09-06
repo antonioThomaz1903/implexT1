@@ -1,3 +1,6 @@
+// Trabalho 1 - IMPLEX
+// Antonio Thomaz e Ian Radtke
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<ctime>
@@ -56,6 +59,7 @@ tlista *getByKey(tlista *raiz, tlista *fim, int (*compara)(void*a, void*b), void
     }
 }
 
+// Copia lista para vetor estático (int)
 int *copia(tlista *raiz, tlista *fim){
     tlista *p;
     int *vetor = (int*)calloc(fim->i+1, sizeof(int));
@@ -67,6 +71,7 @@ int *copia(tlista *raiz, tlista *fim){
     return vetor;
 }
 
+// Copia lista para outra lista
 void copia(tlista **raiz, tlista **fim, tlista *src){
     int *aux;
     for(tlista *p = src; p!=NULL; p=p->prox){
@@ -84,6 +89,7 @@ void troca(tlista **a, tlista**b){
     (*b)->dado = aux; 
 }
 
+// Troca dois elementos de vetor estático
 void troca(int *a, int *b){
     int aux;
     aux = *b;
@@ -141,6 +147,7 @@ void cria_quase(tlista **raiz, tlista **fim, int qtd){
     }
 }
 
+// Desaloca lista encadeada
 void destroi(tlista **raiz){
     if(*raiz == NULL){
         return;
@@ -152,24 +159,18 @@ void destroi(tlista **raiz){
 
 // Método auxiliar do quicksort
 tlista *separa(tlista *p, tlista *r, tlista **raiz, tlista **fim, int (*compara)(void *a, void *b)){
-    tlista *x, *i, *j;
-    int aux = 0;
-    x = p; i = p; j = r;
+    tlista *x = p, *i = p->ant, *j = r->prox;
     while (1) {
-        if(aux){
-            j = j->ant;
-            i = i->prox;
-        }
-        while (compara(j->dado, x->dado) < 0){
+        do{
             j = j->ant;
         }
-        while (compara(i->dado, x->dado) > 0){
+        while (compara(j->dado, x->dado) < 0);
+        do{
             i = i->prox;
-        }
-        if (i->i < j->i){
+        }    
+        while (compara(i->dado, x->dado) > 0);
+        if (i->i < j->i)
             troca(&i, &j);
-            aux = 1;
-        }
         else
             return j;
     }
@@ -185,10 +186,23 @@ void quicksort(tlista *p, tlista *r, tlista **raiz, tlista **fim, int (*compara)
     }
 }
 
+// Aloca "cabeça" para lista e chama o quicksort
 void quicksort_(tlista **raiz, tlista **fim, int (*compara)(void*a, void*b)){
     tlista *a, *b;
     a = *raiz; b = *fim;
+    tlista *ant = (tlista*)calloc(1, sizeof(tlista));
+    tlista *prox = (tlista*)calloc(1, sizeof(tlista));
+    ant->i = -1;
+    prox->i = (*fim)->i+1;
+    (*raiz)->ant = ant;
+    ant->prox = *raiz;
+    (*fim)->prox = prox;
+    prox->ant = *fim;
     quicksort(a, b, raiz, fim, compara);
+    free(ant);
+    free(prox);
+    (*raiz)->ant = NULL;
+    (*fim)->prox = NULL;
 }
 
 //InsertionSort
@@ -218,6 +232,7 @@ void selectionsort_(tlista **raiz, tlista **fim, int (*compara)(void *a, void *b
     }
 }
 
+// CountingSort
 void countingsort_(int *v, int n){
   int i, j, k;
   int w[n];
@@ -230,6 +245,7 @@ void countingsort_(int *v, int n){
       v[i++]=j;
 }
 
+// Método auxiliar do MergeSort
 void intercala(tlista *p, tlista *q, tlista *r, tlista **raiz, tlista **fim, int (*compara)(void *a, void *b)){
     tlista *i, *j, *k, *wi = NULL, *wf = NULL;
     i = p; j = q;
@@ -255,6 +271,7 @@ void intercala(tlista *p, tlista *q, tlista *r, tlista **raiz, tlista **fim, int
 
 }
 
+// Mergesort
 void mergesort(tlista *p, tlista *r, tlista **raiz, tlista **fim, int (*compara)(void *a, void *b)){
     tlista *q;
     if(p->i < r->i -1){
@@ -265,6 +282,7 @@ void mergesort(tlista *p, tlista *r, tlista **raiz, tlista **fim, int (*compara)
     }
 }
 
+// Aloca "cabeça" para lista e chama o Mergesort
 void mergesort_(tlista **raiz, tlista **fim, int (*compara)(void *a, void *b)){
     tlista *a, *b;
     int aux = 0;
@@ -278,6 +296,7 @@ void mergesort_(tlista **raiz, tlista **fim, int (*compara)(void *a, void *b)){
     b->prox = NULL;
 }
 
+// Cria a estrutura heap
 void criaHeap(int *vet, int i, int f){
     int aux = vet[i];
     int j = i * 2 + 1;
@@ -298,6 +317,7 @@ void criaHeap(int *vet, int i, int f){
     vet[i] = aux;
 }
 
+// Heapsort
 void heapsort_(int *vet, int N){
     int i, aux;
     for(i=(N - 1)/2; i >= 0; i--){

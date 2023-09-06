@@ -1,3 +1,6 @@
+// Trabalho 1 - IMPLEX
+// Antonio Thomaz e Ian Radtke
+
 #include<iostream>
 #include<stdio.h>
 #include<stdlib.h>
@@ -8,6 +11,7 @@
 using namespace std;
 using namespace chrono;
 
+// Imprime lista no terminal
 void imprime(tlista *raiz){
     tlista *p;
     for(p = raiz; p!=NULL; p=p->prox){
@@ -16,12 +20,14 @@ void imprime(tlista *raiz){
     printf("\n");
 }
 
+// Imprime vetor no terminal
 void imprime(int *v, int tam){
     for(int i=0; i<tam; i++){
         printf("%d ", v[i]);
     }
 }
 
+// Compara dois elementos da lista
 int compara(void*a, void*b){
     if(*(int*)a == *(int*)b){
         return 0;
@@ -32,6 +38,7 @@ int compara(void*a, void*b){
     return 1;
 }
 
+// Calcula e imprime o tempo para vetor ordenado
 void teste_ordenado(FILE *arq, int i, int f, int s){
 
     fprintf(arq, "[[ORDERED]]\n");
@@ -104,6 +111,7 @@ void teste_ordenado(FILE *arq, int i, int f, int s){
     }
 }
 
+// Calcula e imprime o tempo para vetor inverso
 void teste_inverso(FILE *arq, int i, int f, int s){
 
     fprintf(arq, "[[REVERSE]]\n");
@@ -176,6 +184,7 @@ void teste_inverso(FILE *arq, int i, int f, int s){
     }
 }
 
+// Calcula e imprime o tempo para vetor quase ordenado
 void teste_quase(FILE *arq, int i, int f, int s){
 
     fprintf(arq, "[[NEARLY ORDERED]]\n");
@@ -248,6 +257,7 @@ void teste_quase(FILE *arq, int i, int f, int s){
     }
 }
 
+// Calcula e imprime o tempo para vetor aleatório
 void teste_aleatorio(FILE *arq, int i, int f, int s, int r){
 
     fprintf(arq, "[[RANDOM]]\n");
@@ -340,6 +350,9 @@ int main()
     tlista *raiz = NULL;
     tlista *fim = NULL;
 
+    steady_clock::time_point t1, t2;
+    duration<double> delta;
+
     int i1, i2, step, rep;
     printf("\nDIGITE O TAMANHO INICIAL: ");
     scanf("%d", &i1);
@@ -350,14 +363,29 @@ int main()
     printf("DIGITE O NUMERO DE REPETICOES: ");
     scanf("%d", &rep);
 
+    t1 = steady_clock::now();
     teste_aleatorio(arq, i1, i2, step, rep);
+    t2 = steady_clock::now();
+    delta = duration_cast<duration<double>>(t2-t1);
+    printf("TESTE ALEATORIO COMPLETO EM: %.6lfs\n", delta.count());
     fprintf(arq, "\n");
+    t1 = steady_clock::now();
     teste_ordenado(arq, i1, i2, step);
+    t2 = steady_clock::now();
+    delta = duration_cast<duration<double>>(t2-t1);
+    printf("TESTE ORDENADO COMPLETO EM: %.6lfs\n", delta.count());
     fprintf(arq, "\n");
+    t1 = steady_clock::now();
     teste_quase(arq, i1, i2, step);
+    t2 = steady_clock::now();
+    delta = duration_cast<duration<double>>(t2-t1);
+    printf("TESTE QUASE ORDENADO COMPLETO EM: %.6lfs\n", delta.count());
     fprintf(arq, "\n");
+    t1 = steady_clock::now();
     teste_inverso(arq, i1, i2, step);
-    
+    t2 = steady_clock::now();
+    delta = duration_cast<duration<double>>(t2-t1);
+    printf("TESTE INVERSO COMPLETO EM: %.6lfs\n", delta.count());
     fclose(arq);
     return 0;
 }

@@ -68,9 +68,11 @@ int *copia(tlista *raiz, tlista *fim){
 }
 
 void copia(tlista **raiz, tlista **fim, tlista *src){
+    int *aux;
     for(tlista *p = src; p!=NULL; p=p->prox){
-        int aux = *(int*)p->dado;
-        add(raiz, fim, &aux);
+        aux = (int*)calloc(1, sizeof(int));
+        *aux = *(int*)p->dado;
+        add(raiz, fim, aux);
     }
 }
 
@@ -111,7 +113,7 @@ void cria_inverso(tlista **raiz, tlista **fim, int qtd){
 
 // Inicializa a lista como um vetor aleatório
 void cria_aleatorio(tlista **raiz, tlista **fim, int qtd){
-    srand(time(NULL));
+    
     int *aux;
     for(int i=0; i < qtd; i++){
         aux = (int*)calloc(1, sizeof(int));

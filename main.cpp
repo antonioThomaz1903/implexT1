@@ -11,8 +11,9 @@ using namespace chrono;
 void imprime(tlista *raiz){
     tlista *p;
     for(p = raiz; p!=NULL; p=p->prox){
-        printf("%d\n", *(int*)p->dado);
+        printf("%d ", *(int*)p->dado);
     }
+    printf("\n");
 }
 
 void imprime(int *v, int tam){
@@ -259,12 +260,12 @@ void teste_aleatorio(FILE *arq, int i, int f, int s, int r){
     steady_clock::time_point t1, t2;
     duration<double> delta; // duration_cast<duration<double>>();
     for(; i<=f; i+=s){
+        fprintf(arq, "%6d\t", i);
         for(j=0; j<6; j++){
             media[j] = 0;
         }
         for(j = 0; j<r; j++){
             cria_aleatorio(&raiz, &fim, i);
-
             copia(&auxi, &auxf, raiz);
             t1 = steady_clock::now();
             selectionsort_(&auxi, &auxf, compara);
@@ -273,7 +274,6 @@ void teste_aleatorio(FILE *arq, int i, int f, int s, int r){
             media[0] += delta.count();
             destroi(&auxi);
             auxi = NULL; auxf = NULL;
-
             copia(&auxi, &auxf, raiz);
             t1 = steady_clock::now();
             insertionsort_(&auxi, &auxf, compara);
@@ -320,7 +320,6 @@ void teste_aleatorio(FILE *arq, int i, int f, int s, int r){
             destroi(&auxi);
             destroi(&raiz);
             raiz = NULL; fim = NULL; auxi = NULL; auxf = NULL;
-
         }
         for(j=0; j<6; j++){
             media[j]/=r;
@@ -337,6 +336,7 @@ void teste_aleatorio(FILE *arq, int i, int f, int s, int r){
 int main()
 {
     FILE *arq = fopen("saida.txt", "w");
+    srand(time(NULL));
     tlista *raiz = NULL;
     tlista *fim = NULL;
 
@@ -357,7 +357,7 @@ int main()
     teste_quase(arq, i1, i2, step);
     fprintf(arq, "\n");
     teste_inverso(arq, i1, i2, step);
-
+    
     fclose(arq);
     return 0;
 }
